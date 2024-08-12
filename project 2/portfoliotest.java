@@ -1,52 +1,66 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// Step 1: Define the Strategy Interface
+interface InvestmentStrategy {
+    void invest(double amount);
+}
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+// Step 2: Implement Different Investment Strategies
 
-public class PortfolioTest {
+// Conservative Strategy
+class ConservativeStrategy implements InvestmentStrategy {
+    @Override
+    public void invest(double amount) {
+        System.out.println("Investing " + amount + " in conservative instruments like bonds and fixed deposits.");
+    }
+}
 
-    private Portfolio portfolio;
+// Balanced Strategy
+class BalancedStrategy implements InvestmentStrategy {
+    @Override
+    public void invest(double amount) {
+        System.out.println("Investing " + amount + " in a balanced mix of stocks and bonds.");
+    }
+}
 
-    @BeforeEach
-    public void setUp() {
-        portfolio = new Portfolio();
+// Aggressive Strategy
+class AggressiveStrategy implements InvestmentStrategy {
+    @Override
+    public void invest(double amount) {
+        System.out.println("Investing " + amount + " in aggressive instruments like stocks and high-risk assets.");
+    }
+}
+
+// Step 3: Create a Context Class
+class Portfolio {
+    private InvestmentStrategy investmentStrategy;
+
+    // Set the strategy dynamically
+    public void setInvestmentStrategy(InvestmentStrategy investmentStrategy) {
+        this.investmentStrategy = investmentStrategy;
     }
 
-    @Test
-    public void testConservativeStrategy() {
-        InvestmentStrategy conservativeStrategy = new ConservativeStrategy();
-        portfolio.setInvestmentStrategy(conservativeStrategy);
+    public void invest(double amount) {
+        if (investmentStrategy == null) {
+            throw new IllegalStateException("Investment strategy not set");
+        }
+        investmentStrategy.invest(amount);
+    }
+}
 
+// Step 4: Use the Strategy Pattern in the Main Class
+public class Main {
+    public static void main(String[] args) {
+        Portfolio portfolio = new Portfolio();
+
+        // Using Conservative Strategy
+        portfolio.setInvestmentStrategy(new ConservativeStrategy());
         portfolio.invest(10000);
-        // Assertions can be made based on the behavior of the conservative strategy
-        assertTrue(true, "Conservative Strategy was executed.");
-    }
 
-    @Test
-    public void testBalancedStrategy() {
-        InvestmentStrategy balancedStrategy = new BalancedStrategy();
-        portfolio.setInvestmentStrategy(balancedStrategy);
-
+        // Using Balanced Strategy
+        portfolio.setInvestmentStrategy(new BalancedStrategy());
         portfolio.invest(10000);
-        // Assertions can be made based on the behavior of the balanced strategy
-        assertTrue(true, "Balanced Strategy was executed.");
-    }
 
-    @Test
-    public void testAggressiveStrategy() {
-        InvestmentStrategy aggressiveStrategy = new AggressiveStrategy();
-        portfolio.setInvestmentStrategy(aggressiveStrategy);
-
+        // Using Aggressive Strategy
+        portfolio.setInvestmentStrategy(new AggressiveStrategy());
         portfolio.invest(10000);
-        // Assertions can be made based on the behavior of the aggressive strategy
-        assertTrue(true, "Aggressive Strategy was executed.");
-    }
-
-    @Test
-    public void testNoStrategySet() {
-        assertThrows(IllegalStateException.class, () -> {
-            portfolio.invest(10000);
-        });
     }
 }
